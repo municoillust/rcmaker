@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>相関図メーカー</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>相関図メーカー</h1>
+    </header>
+
+    <div class="wrap">
+      <div class="intro-row">
+        <div class="hint">
+          タイトル、画像、テキストの3要素を組み合わせて、ボックスを生成します。<br />
+          2つのボックスを選択して選択中のBOXを右クリックすると<b>BOXを接続</b>。<br />
+          線や線の間のラベルを右クリックで、矢印方向・色変更ができます。
+        </div>
+        <button id="btnHelpToggle" class="help-btn" …>使い方説明</button>
+      </div>
+
+      <div
+        id="helpPopup"
+        class="help-popup"
+        role="dialog"
+        aria-labelledby="helpTitle"
+        aria-hidden="true"
+      >
+        <div class="help-header">
+          <strong id="helpTitle">このアプリの使い方</strong>
+          <button type="button" class="help-close" aria-label="閉じる">
+            閉じる×
+          </button>
+        </div>
+        <div id="helpContent" class="help-body"></div>
+      </div>
+
+      <!-- ボックス生成 -->
+      <div
+        id="boxComposer"
+        class="toolbar-section"
+        role="group"
+        aria-label="ボックス生成"
+      >
+        <label><input type="checkbox" id="chkTitle" />タイトル</label>
+        <label><input type="checkbox" id="chkImage" />画像</label>
+        <label><input type="checkbox" id="chkText" />テキスト</label>
+        <button id="btnGenerateBox" disabled>ボックス生成</button>
+        <input
+          type="file"
+          id="imageUploader"
+          accept="image/*"
+          style="display: none"
+        />
+      </div>
+      <div id="canvasWrap">
+        <svg class="wires" id="wires" preserveAspectRatio="none">
+          <defs>
+            <marker
+              id="arrowEnd"
+              viewBox="0 0 10 10"
+              markerUnits="userSpaceOnUse"
+              refX="12"
+              refY="5"
+              markerWidth="18"
+              markerHeight="18"
+              orient="auto"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"></path>
+            </marker>
+            <marker
+              id="arrowStart"
+              viewBox="0 0 10 10"
+              markerUnits="userSpaceOnUse"
+              refX="0"
+              refY="5"
+              markerWidth="18"
+              markerHeight="18"
+              orient="auto"
+            >
+              <path d="M 10 0 L 0 5 L 10 10 z" fill="context-stroke"></path>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- ボックス操作 -->
+      <div id="boxcontrol">
+        <span class="bgp-label">エリア操作</span>
+        <button id="deleteBtn" class="danger">ボックスを全削除</button>
+        <button id="clearWiresBtn">線を全消去</button>
+      </div>
+
+      <!-- 背景色の変更 -->
+      <div id="bgPicker" class="bg-picker" aria-label="背景色変更">
+        <span class="bgp-label">背景色を変更する</span>
+        <button class="swatch" data-bg="#ffffff" aria-label="白" title="白">
+          <span class="swatch-chip" style="background: #ffffff"></span>
+        </button>
+        <button class="swatch" data-bg="#000000" aria-label="黒" title="黒">
+          <span class="swatch-chip" style="background: #000000"></span>
+        </button>
+
+        <button
+          class="swatch"
+          data-bg="#e5e9f0"
+          aria-label="グレー"
+          title="グレー"
+        >
+          <span class="swatch-chip" style="background: #e5e9f0"></span>
+        </button>
+        <button
+          class="swatch"
+          data-bg="#d7f7ff"
+          aria-label="薄い水色"
+          title="薄い水色"
+        >
+          <span class="swatch-chip" style="background: #d7f7ff"></span>
+        </button>
+        <button
+          class="swatch"
+          data-bg="#ffdcc4"
+          aria-label="薄いオレンジ"
+          title="薄いオレンジ"
+        >
+          <span class="swatch-chip" style="background: #ffdcc4"></span>
+        </button>
+        <button
+          class="swatch"
+          data-bg="#ffd6eb"
+          aria-label="薄いピンク"
+          title="薄いピンク"
+        >
+          <span class="swatch-chip" style="background: #ffd6eb"></span>
+        </button>
+        <button
+          class="swatch"
+          data-bg="#c7f7d6"
+          aria-label="薄い緑"
+          title="薄い緑"
+        >
+          <span class="swatch-chip" style="background: #c7f7d6"></span>
+        </button>
+      </div>
+
+      <!-- スクリーンショット -->
+      <div id="shotControls" class="toolbar">
+        <button id="btnShotCopy" class="btn">画像をコピー</button>
+        <button id="btnShotSave" class="btn">画像を保存</button>
+      </div>
+    </div>
+
+    <footer class="footer">作成者：むにこ（X：@municocco）</footer>
+
+    <footer class="licenses">
+      <p>本アプリは OSS を利用しています：</p>
+      <ul>
+        <li>html-to-image（MIT License）© 2017–2023 W.Y.</li>
+      </ul>
+
+      <details>
+        <summary>MITライセンス全文を表示</summary>
+        <pre>
+Copyright (c) 2017-2023 W.Y.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+...
+THE SOFTWARE.
+    </pre
+        >
+      </details>
+    </footer>
+
+    <script type="module" src="./js/main.js" defer></script>
+    <script src="./js/manual-popup.js" defer></script>
+
+    <script type="module">
+      import { setupScreenshotButtons } from "./js/screenshot.js";
+      window.addEventListener("DOMContentLoaded", () => {
+        const target = document.getElementById("canvasWrap"); // ドラッグエリアのルート要素
+        const copyBtn = document.getElementById("btnShotCopy");
+        const saveBtn = document.getElementById("btnShotSave");
+        setupScreenshotButtons({
+          target,
+          copyBtn,
+          saveBtn,
+          onToast: (msg, ok) => {
+            // 任意：トーストUIがあれば差し替え
+            console[ok ? "log" : "warn"](msg);
+          },
+        });
+      });
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        setupManualPopup({
+          button: "#btnHelpToggle",
+          popup: "#helpPopup",
+          content: "#helpContent",
+          area: "#canvasWrap",
+          manualUrl: "./manual.txt",
+        });
+      });
+    </script>
+  </body>
+</html>
